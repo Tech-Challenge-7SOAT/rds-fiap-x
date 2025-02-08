@@ -17,5 +17,5 @@ resource "aws_security_group_rule" "rds_ingress_from_ecs" {
   to_port                  = 5432
   protocol                 = "tcp"
   security_group_id        = aws_security_group.fiapx_rds_sg.id
-  # source_security_group_id = data.aws_security_group.ecs_sg.id  # Permite apenas o ECS acessar o RDS
+  source_security_group_id = data.aws_security_group.ecs_sg.id  # Permite apenas o ECS acessar o RDS
 }
