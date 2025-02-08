@@ -24,6 +24,6 @@ resource "null_resource" "db_schema" {
   depends_on = [aws_db_instance.postgres]
 
   provisioner "local-exec" {
-    command = "export PGPASSWORD=${var.DB_PASSWORD}; sleep 60; psql -U ${var.DB_USERNAME} -d ${var.DB_NAME} -h ${aws_db_instance.default.address} -f ./db_schema.sql"
+    command = "export PGPASSWORD=${var.DB_PASSWORD}; sleep 60; psql -U ${var.DB_USERNAME} -d ${var.DB_NAME} -h ${aws_db_instance.postgres.address} -f ./db_schema.sql"
   }
 }
