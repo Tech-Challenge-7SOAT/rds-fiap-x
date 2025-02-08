@@ -24,6 +24,15 @@ resource "null_resource" "db_schema" {
   depends_on = [aws_db_instance.postgres]
 
   provisioner "local-exec" {
-    command = "export PGPASSWORD=${var.DB_PASSWORD}; sleep 60; psql -U ${var.DB_USERNAME} -d ${var.DB_NAME} -h ${aws_db_instance.postgres.address} -f ./db_schema.sql"
+    command = <<EOT
+      echo "Aguardando RDS ficar disponível..."
+      for i in {1..10}; do
+        pg_isready -h ${aws_db_instance.postgres.address} -U ${var.DB_USERNAME} && break
+        echo "Aguardando RDS... tentativa $i"
+        sleep 15
+      done
+      echo "Executando migração do banco de dados..."
+      PGPASSWORD=${var.DB_PASSWORD} psql -U ${var.DB_USERNAME} -d ${var.DB_NAME} -h ${aws_db_instance.postgres.address} -f ./db_schema.sql
+    EOT
   }
 }
